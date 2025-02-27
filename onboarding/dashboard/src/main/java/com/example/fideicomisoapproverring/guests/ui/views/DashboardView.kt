@@ -41,6 +41,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -92,6 +93,7 @@ fun DashboardView(
     onViewAllProducts: () -> Unit = {},
     onAuthenticate: () -> Unit = {},
     onMenuClick: (String) -> Unit = {},
+    onThemeSettingsClick: () -> Unit = {},
 ) {
     var openAlertDialog = remember { mutableStateOf(false) }
 
@@ -105,7 +107,12 @@ fun DashboardView(
             ) {
                 ModalDrawerContentView(
                     menus = NavigationDrawerMenuItem.defaultMenus,
-                    onMenuClick = onMenuClick,
+                    onMenuClick = { route ->
+                        when (route) {
+                            Routes.ThemeSettings.value -> onThemeSettingsClick()
+                            else -> onMenuClick(route)
+                        }
+                    },
                 )
             }
         },
@@ -272,28 +279,37 @@ fun ModalDrawerContentView(
     onMenuClick: (String) -> Unit = {},
 ) {
     Column(
-        modifier =
-            Modifier
-                .background(color = MaterialTheme.colorScheme.surface.copy(alpha = 0.25F))
-                .wrapContentSize()
-                .clip(shape = MaterialTheme.shapes.large),
+        modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.surface)
+            .wrapContentSize()
+            .clip(shape = MaterialTheme.shapes.large),
     ) {
         menus.forEach {
             if (it.title == R.string.label_connect_wallet) {
                 HorizontalDivider()
                 NavigationDrawerItem(
-                    label = { Text(text = stringResource(it.title)) },
-                    badge = { it.icon?.let { Icon(imageVector = it, contentDescription = null) } },
+                    label = { Text(text = stringResource(it.title), color = MaterialTheme.colorScheme.onSurface) },
+                    badge = { it.icon?.let { Icon(imageVector = it, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface) } },
                     selected = false,
                     onClick = { onMenuClick(it.route) },
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedContainerColor = Color.Transparent,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurface,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurface
+                    )
                 )
                 HorizontalDivider()
             } else {
                 NavigationDrawerItem(
-                    label = { Text(text = stringResource(it.title)) },
-                    badge = { it.icon?.let { Icon(imageVector = it, contentDescription = null) } },
+                    label = { Text(text = stringResource(it.title), color = MaterialTheme.colorScheme.onSurface) },
+                    badge = { it.icon?.let { Icon(imageVector = it, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface) } },
                     selected = false,
                     onClick = { onMenuClick(it.route) },
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedContainerColor = Color.Transparent,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurface,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurface
+                    )
                 )
             }
         }
